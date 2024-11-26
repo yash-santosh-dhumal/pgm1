@@ -1,0 +1,1088 @@
+   1 .
+
+package Assignment1;
+
+import java.util.Scanner;
+
+class StackUsingLinkedList {
+    class Node {
+        int data;
+        Node next;
+
+        Node(int data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    private Node top;
+
+    public StackUsingLinkedList() {
+        top = null;
+    }
+
+    public void push(int data) {
+        Node newNode = new Node(data);
+        newNode.next = top;
+        top = newNode;
+        System.out.println("Pushed " + data + " to the stack.");
+    }
+
+    public int pop() {
+        if (isEmpty()) {
+            System.out.println("Stack Underflow! No elements to pop.");
+            return -1;
+        }
+        int poppedData = top.data;
+        top = top.next;
+        return poppedData;
+    }
+
+    public int peek() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty.");
+            return -1;
+        }
+        return top.data;
+    }
+
+    public boolean isEmpty() {
+        return top == null;
+    }
+
+    public void display() {
+        if (isEmpty()) {
+            System.out.println("Stack is empty.");
+            return;
+        }
+        Node currentNode = top;
+        System.out.println("Stack elements:");
+        while (currentNode != null) {
+            System.out.print(currentNode.data + " ");
+            currentNode = currentNode.next;
+        }
+        System.out.println();
+    }
+}
+
+public class Stack {
+    public static void main(String[] args) {
+        StackUsingLinkedList stack = new StackUsingLinkedList();
+        Scanner scanner = new Scanner(System.in);
+        int choice, element;
+
+        do {
+            System.out.println("\nStack Operations Menu:");
+            System.out.println("1. Push");
+            System.out.println("2. Pop");
+            System.out.println("3. Peek");
+            System.out.println("4. Display Stack");
+            System.out.println("5. Check if Stack is Empty");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter element to push: ");
+                    element = scanner.nextInt();
+                    stack.push(element);
+                    break;
+                case 2:
+                    element = stack.pop();
+                    if (element != -1) {
+                        System.out.println("Popped element: " + element);
+                    }
+                    break;
+                case 3:
+                    element = stack.peek();
+                    if (element != -1) {
+                        System.out.println("Top element: " + element);
+                    }
+                    break;
+                case 4:
+                    stack.display();
+                    break;
+                case 5:
+                    if (stack.isEmpty()) {
+                        System.out.println("Stack is empty.");
+                    } else {
+                        System.out.println("Stack is not empty.");
+                    }
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        } while (choice != 6);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+      2.
+package Assignment1;
+
+import java.util.Scanner;
+import java.util.Stack;
+
+public class InfixToPostfix {
+
+    // Method to determine the precedence of operators
+    public static int precedence(char ch) {
+        switch (ch) {
+            case '+': case '-':
+                return 1;
+            case '*': case '/':
+                return 2;
+            case '^':
+                return 3;
+        }
+        return -1;
+    }
+
+    // Method to convert infix expression to postfix
+    public static String infixToPostfix(String expression) {
+        String result = "";
+        Stack<Character> stack = new Stack<>();
+
+        for (int i = 0; i < expression.length(); i++) {
+            char c = expression.charAt(i);
+
+            // If the scanned character is an operand, add it to result
+            if (Character.isLetterOrDigit(c)) {
+                result += c;
+            }
+            // If the scanned character is '(', push it to the stack
+            else if (c == '(') {
+                stack.push(c);
+            }
+            // If the scanned character is ')', pop and append until '(' is encountered
+            else if (c == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    result += stack.pop();
+                }
+                stack.pop(); // Remove the '(' from the stack
+            }
+            // If an operator is encountered
+            else {
+                while (!stack.isEmpty() && precedence(c) <= precedence(stack.peek())) {
+                    result += stack.pop();
+                }
+                stack.push(c);
+            }
+        }
+
+        // Pop all remaining operators from the stack
+        while (!stack.isEmpty()) {
+            result += stack.pop();
+        }
+
+        return result;
+    }
+
+    // Main method
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice;
+
+        do {
+            System.out.println("\nMenu: ");
+            System.out.println("1. Convert Infix to Postfix");
+            System.out.println("2. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter an infix expression: ");
+                    String infixExpression = scanner.nextLine();
+                    String postfixExpression = infixToPostfix(infixExpression);
+                    System.out.println("Postfix Expression: " + postfixExpression);
+                    break;
+                case 2:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please choose again.");
+                    break;
+            }
+
+        } while (choice != 2);
+
+        scanner.close();
+    }
+}
+
+
+
+
+
+    3.
+
+package Assignment2;
+
+import java.util.Scanner;
+
+public class PizzaParlour {
+    private int front, rear, size;
+    private int[] queue;
+
+    public PizzaParlour(int N) {
+        size = N;
+        queue = new int[size];
+        front = -1;
+        rear = -1;
+    }
+
+    public boolean isFull() {
+        return (front == 0 && rear == size - 1) || (front == rear + 1);
+    }
+
+    public boolean isEmpty() {
+        return front == -1;
+    }
+
+    public void placeOrder(int order) {
+        if (isFull()) {
+            System.out.println("Order queue is full. Cannot place more orders.");
+        } else {
+            if (front == -1) {
+                front = 0;
+            }
+            rear = (rear + 1) % size;
+            queue[rear] = order;
+            System.out.println("Order " + order + " placed.");
+        }
+    }
+
+    public void serveOrder() {
+        if (isEmpty()) {
+            System.out.println("No orders to serve.");
+        } else {
+            System.out.println("Order " + queue[front] + " served.");
+            if (front == rear) {
+                front = -1;
+                rear = -1;
+            } else {
+                front = (front + 1) % size;
+            }
+        }
+    }
+
+    public void displayOrders() {
+        if (isEmpty()) {
+            System.out.println("No pending orders.");
+        } else {
+            System.out.print("Current orders: ");
+            int i = front;
+            while (i != rear) {
+                System.out.print(queue[i] + " ");
+                i = (i + 1) % size;
+            }
+            System.out.println(queue[rear]);
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter maximum number of orders (N): ");
+        int N = scanner.nextInt();
+        PizzaParlour pizzaParlour = new PizzaParlour(N);
+
+        int choice;
+        do {
+            System.out.println("\nMenu: ");
+            System.out.println("1. Place Order");
+            System.out.println("2. Serve Order");
+            System.out.println("3. Display Orders");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter order number: ");
+                    int order = scanner.nextInt();
+                    pizzaParlour.placeOrder(order);
+                    break;
+                case 2:
+                    pizzaParlour.serveOrder();
+                    break;
+                case 3:
+                    pizzaParlour.displayOrders();
+                    break;
+                case 4:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please choose again.");
+            }
+        } while (choice != 4);
+
+        scanner.close();
+    }
+}
+
+
+
+
+     4.
+import java.util.Scanner;
+
+class Contact {
+    String name;
+    String phoneNumber;
+
+    public Contact(String name, String phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "Name: " + name + ", Phone Number: " + phoneNumber;
+    }
+}
+
+class TreeNode {
+    Contact contact;
+    TreeNode left, right;
+
+    public TreeNode(Contact contact) {
+        this.contact = contact;
+        this.left = this.right = null;
+    }
+}
+
+class PhoneBook {
+    private TreeNode root;
+
+    public PhoneBook() {
+        this.root = null;
+    }
+
+    public void insert(String name, String phoneNumber) {
+        Contact newContact = new Contact(name, phoneNumber);
+        root = insertRec(root, newContact);
+        System.out.println("Contact added: " + newContact);
+    }
+
+    private TreeNode insertRec(TreeNode root, Contact contact) {
+        if (root == null) {
+            return new TreeNode(contact);
+        }
+
+        if (contact.phoneNumber.compareTo(root.contact.phoneNumber) < 0) {
+            root.left = insertRec(root.left, contact);
+        } else if (contact.phoneNumber.compareTo(root.contact.phoneNumber) > 0) {
+            root.right = insertRec(root.right, contact);
+        } else {
+            System.out.println("Contact with phone number " + contact.phoneNumber + " already exists.");
+        }
+        return root;
+    }
+
+    public void search(String phoneNumber) {
+        TreeNode result = searchRec(root, phoneNumber);
+        if (result != null) {
+            System.out.println("Contact found: " + result.contact);
+        } else {
+            System.out.println("Contact with phone number " + phoneNumber + " not found.");
+        }
+    }
+
+    private TreeNode searchRec(TreeNode root, String phoneNumber) {
+        if (root == null || root.contact.phoneNumber.equals(phoneNumber)) {
+            return root;
+        }
+
+        if (phoneNumber.compareTo(root.contact.phoneNumber) < 0) {
+            return searchRec(root.left, phoneNumber);
+        }
+        return searchRec(root.right, phoneNumber);
+    }
+
+    public void update(String phoneNumber, String newName) {
+        TreeNode result = searchRec(root, phoneNumber);
+        if (result != null) {
+            result.contact.name = newName;
+            System.out.println("Contact updated: " + result.contact);
+        } else {
+            System.out.println("Contact with phone number " + phoneNumber + " not found.");
+        }
+    }
+
+    public void delete(String phoneNumber) {
+        root = deleteRec(root, phoneNumber);
+    }
+
+    private TreeNode deleteRec(TreeNode root, String phoneNumber) {
+        if (root == null) {
+            System.out.println("Contact with phone number " + phoneNumber + " not found.");
+            return root;
+        }
+
+        if (phoneNumber.compareTo(root.contact.phoneNumber) < 0) {
+            root.left = deleteRec(root.left, phoneNumber);
+        } else if (phoneNumber.compareTo(root.contact.phoneNumber) > 0) {
+            root.right = deleteRec(root.right, phoneNumber);
+        } else {
+            if (root.left == null) {
+                System.out.println("Contact deleted: " + root.contact);
+                return root.right;
+            } else if (root.right == null) {
+                System.out.println("Contact deleted: " + root.contact);
+                return root.left;
+            }
+
+            TreeNode minNode = findMin(root.right);
+            root.contact = minNode.contact;
+            root.right = deleteRec(root.right, minNode.contact.phoneNumber);
+        }
+        return root;
+    }
+
+    private TreeNode findMin(TreeNode root) {
+        while (root.left != null) {
+            root = root.left;
+        }
+        return root;
+    }
+
+    public void displayContacts() {
+        if (root == null) {
+            System.out.println("No contacts in phone book.");
+        } else {
+            System.out.println("Contacts in phone book:");
+            inorderTraversal(root);
+        }
+    }
+
+    private void inorderTraversal(TreeNode root) {
+        if (root != null) {
+            inorderTraversal(root.left);
+            System.out.println(root.contact);
+            inorderTraversal(root.right);
+        }
+    }
+}
+
+public class PhoneBookApplication {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        PhoneBook phoneBook = new PhoneBook();
+        int choice;
+
+        do {
+            System.out.println("\nPhone Book Menu:");
+            System.out.println("1. Add Contact");
+            System.out.println("2. Search Contact");
+            System.out.println("3. Update Contact");
+            System.out.println("4. Delete Contact");
+            System.out.println("5. Display All Contacts");
+            System.out.println("6. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter name: ");
+                    String name = scanner.nextLine();
+                    System.out.print("Enter phone number: ");
+                    String phoneNumber = scanner.nextLine();
+                    phoneBook.insert(name, phoneNumber);
+                    break;
+                case 2:
+                    System.out.print("Enter phone number to search: ");
+                    phoneNumber = scanner.nextLine();
+                    phoneBook.search(phoneNumber);
+                    break;
+                case 3:
+                    System.out.print("Enter phone number to update: ");
+                    phoneNumber = scanner.nextLine();
+                    System.out.print("Enter new name: ");
+                    name = scanner.nextLine();
+                    phoneBook.update(phoneNumber, name);
+                    break;
+                case 4:
+                    System.out.print("Enter phone number to delete: ");
+                    phoneNumber = scanner.nextLine();
+                    phoneBook.delete(phoneNumber);
+                    break;
+                case 5:
+                    phoneBook.displayContacts();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice! Please try again.");
+            }
+        } while (choice != 6);
+
+        scanner.close();
+    }
+}
+
+
+
+
+    5.
+
+package Assignment5;
+
+import java.util.Scanner;
+
+// Node class to represent each node in the Threaded Binary Tree
+class Node {
+    int data; // Node value
+    Node left, right; // Left and right child pointers
+    boolean leftThread, rightThread; // Flags to indicate threading
+
+    // Constructor to initialize the node
+    Node(int data) {
+        this.data = data;
+        this.left = this.right = null;
+        this.leftThread = this.rightThread = false;
+    }
+}
+
+// Class to represent the Threaded Binary Tree
+class ThreadedBinaryTree {
+    private Node root; // Root of the tree
+
+    // Method to insert a new node into the tree
+    public void insert(int data) {
+        Node newNode = new Node(data);
+        if (root == null) { // If the tree is empty
+            root = newNode;
+            return;
+        }
+
+        Node parent = null;
+        Node current = root;
+
+        // Traverse the tree to find the correct position for the new node
+        while (current != null) {
+            parent = current;
+            if (data < current.data) {
+                if (!current.leftThread) {
+                    current = current.left;
+                } else {
+                    break;
+                }
+            } else {
+                if (!current.rightThread) {
+                    current = current.right;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        // Insert the new node as a child and update threading
+        if (data < parent.data) {
+            newNode.left = parent.left;
+            newNode.right = parent;
+            parent.leftThread = false;
+            parent.left = newNode;
+        } else {
+            newNode.right = parent.right;
+            newNode.left = parent;
+            parent.rightThread = false;
+            parent.right = newNode;
+        }
+    }
+
+    // Method to perform in-order traversal of the tree
+    public void inorder() {
+        if (root == null) {
+            System.out.println("Tree is empty.");
+            return;
+        }
+
+        // Start from the leftmost node
+        Node current = root;
+        while (!current.leftThread) {
+            current = current.left;
+        }
+
+        // Perform in-order traversal using threading
+        while (current != null) {
+            System.out.print(current.data + " ");
+            if (current.rightThread) {
+                current = current.right; // Move to in-order successor
+            } else {
+                current = current.right;
+                while (current != null && !current.leftThread) {
+                    current = current.left; // Move to the leftmost node in the right subtree
+                }
+            }
+        }
+        System.out.println();
+    }
+}
+
+// Main application class
+public class ThreadedBinaryTreeApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        ThreadedBinaryTree tbt = new ThreadedBinaryTree(); // Create a threaded binary tree object
+        int choice, data;
+
+        while (true) {
+            // Display the menu
+            System.out.println("Menu:");
+            System.out.println("1. Insert");
+            System.out.println("2. Inorder Traversal");
+            System.out.println("3. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1: // Insert a new node
+                    System.out.print("Enter data to insert: ");
+                    data = scanner.nextInt();
+                    tbt.insert(data);
+                    break;
+                case 2: // Perform in-order traversal
+                    tbt.inorder();
+                    break;
+                case 3: // Exit the program
+                    scanner.close();
+                    return;
+                default: // Handle invalid input
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
+
+
+
+    6.
+
+package Assignment6;   
+import java.util.*; 
+
+class Edge {
+    int source, destination, weight;
+
+    Edge(int source, int destination, int weight) {
+        this.source = source;
+        this.destination = destination;
+        this.weight = weight;
+    }
+}
+
+class Graph {
+    int vertices;
+    List<Edge> edges;
+
+    Graph(int vertices) {
+        this.vertices = vertices;
+        edges = new ArrayList<>();
+    }
+
+    void addEdge(int source, int destination, int weight) {
+        edges.add(new Edge(source, destination, weight));
+    }
+
+    void primMST() {
+        boolean[] inMST = new boolean[vertices];
+        Edge[] result = new Edge[vertices - 1];
+        int edgeCount = 0;
+        int totalCost = 0;
+        inMST[0] = true;
+
+        while (edgeCount < vertices - 1) {
+            int minWeight = Integer.MAX_VALUE;
+            Edge minEdge = null;
+
+            for (Edge edge : edges) {
+                if (inMST[edge.source] != inMST[edge.destination]) {
+                    if (edge.weight < minWeight) {
+                        minWeight = edge.weight;
+                        minEdge = edge;
+                    }
+                }
+            }
+
+            if (minEdge != null) {
+                result[edgeCount++] = minEdge;
+                totalCost += minEdge.weight;
+                inMST[minEdge.source] = true;
+                inMST[minEdge.destination] = true;
+            }
+        }
+
+        System.out.println("Minimum Spanning Tree edges:");
+        for (Edge edge : result) {
+            System.out.println("City " + edge.source + " - City " + edge.destination + " : " + edge.weight);
+        }
+        System.out.println("Total cost: " + totalCost);
+    }
+}
+
+public class TransportationNetwork {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Graph graph = null;
+        int choice;
+
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Create Graph");
+            System.out.println("2. Add Edge");
+            System.out.println("3. Calculate Minimum Spanning Tree (MST)");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter number of cities: ");
+                    int cities = scanner.nextInt();
+                    graph = new Graph(cities);
+                    System.out.println("Graph created with " + cities + " cities.");
+                    break;
+
+                case 2:
+                    if (graph == null) {
+                        System.out.println("Graph not created yet.");
+                        break;
+                    }
+                    System.out.print("Enter source city, destination city, and weight: ");
+                    int source = scanner.nextInt();
+                    int destination = scanner.nextInt();
+                    int weight = scanner.nextInt();
+                    graph.addEdge(source, destination, weight);
+                    System.out.println("Edge added.");
+                    break;
+
+                case 3:
+                    if (graph == null) {
+                        System.out.println("Graph not created yet.");
+                        break;
+                    }
+                    graph.primMST();
+                    break;
+
+                case 4:
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
+
+  7.
+
+import java.util.*;
+
+class Edge implements Comparable<Edge> {
+    int source, destination, weight;
+
+    public Edge(int source, int destination, int weight) {
+        this.source = source;
+        this.destination = destination;
+        this.weight = weight;
+    }
+
+    @Override
+    public int compareTo(Edge other) {
+        return this.weight - other.weight; // Sort by weight
+    }
+}
+
+class DisjointSet {
+    private int[] parent, rank;
+
+    public DisjointSet(int n) {
+        parent = new int[n];
+        rank = new int[n];
+        for (int i = 0; i < n; i++) {
+            parent[i] = i; // Each node is its own parent initially
+            rank[i] = 0; // Rank is 0 initially
+        }
+    }
+
+    public int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]); // Path compression
+        }
+        return parent[x];
+    }
+
+    public void union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+
+        if (rootX != rootY) {
+            if (rank[rootX] > rank[rootY]) {
+                parent[rootY] = rootX;
+            } else if (rank[rootX] < rank[rootY]) {
+                parent[rootX] = rootY;
+            } else {
+                parent[rootY] = rootX;
+                rank[rootX]++;
+            }
+        }
+    }
+}
+
+public class KruskalMST {
+    private List<Edge> edges; // List of edges
+    private int vertices;
+
+    public KruskalMST(int vertices) {
+        this.vertices = vertices;
+        edges = new ArrayList<>();
+    }
+
+    public void addEdge(int source, int destination, int weight) {
+        edges.add(new Edge(source, destination, weight));
+    }
+
+    public void findMST() {
+        Collections.sort(edges); // Sort edges by weight
+        DisjointSet ds = new DisjointSet(vertices);
+
+        List<Edge> mst = new ArrayList<>();
+        int totalCost = 0;
+
+        for (Edge edge : edges) {
+            int rootSource = ds.find(edge.source);
+            int rootDestination = ds.find(edge.destination);
+
+            if (rootSource != rootDestination) { // Add edge if it does not form a cycle
+                mst.add(edge);
+                totalCost += edge.weight;
+                ds.union(rootSource, rootDestination);
+            }
+        }
+
+        System.out.println("Edges in the Minimum Spanning Tree:");
+        for (Edge edge : mst) {
+            System.out.println("City " + edge.source + " - City " + edge.destination + " : " + edge.weight);
+        }
+        System.out.println("Total cost of Minimum Spanning Tree: " + totalCost);
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.print("Enter the number of cities: ");
+        int vertices = scanner.nextInt();
+
+        KruskalMST graph = new KruskalMST(vertices);
+
+        System.out.print("Enter the number of roads: ");
+        int edges = scanner.nextInt();
+
+        System.out.println("Enter the roads (source, destination, weight):");
+        for (int i = 0; i < edges; i++) {
+            int source = scanner.nextInt();
+            int destination = scanner.nextInt();
+            int weight = scanner.nextInt();
+            graph.addEdge(source, destination, weight);
+        }
+
+        graph.findMST();
+        scanner.close();
+    }
+}
+
+
+   8.
+
+import java.util.*;
+
+class CourierService {
+
+    private int vertices;
+    private int[][] adjMatrix;
+
+    public CourierService(int vertices) {
+        this.vertices = vertices;
+        adjMatrix = new int[vertices][vertices];
+        for (int i = 0; i < vertices; i++) {
+            Arrays.fill(adjMatrix[i], Integer.MAX_VALUE);
+            adjMatrix[i][i] = 0;
+        }
+    }
+
+    public void addRoad(int source, int destination, int distance) {
+        adjMatrix[source][destination] = distance;
+        adjMatrix[destination][source] = distance;
+    }
+
+    public void dijkstra(int startVertex) {
+        boolean[] visited = new boolean[vertices];
+        int[] distances = new int[vertices];
+        Arrays.fill(distances, Integer.MAX_VALUE);
+        distances[startVertex] = 0;
+
+        for (int i = 0; i < vertices; i++) {
+            int u = getMinimumDistanceVertex(visited, distances);
+            visited[u] = true;
+
+            for (int v = 0; v < vertices; v++) {
+                if (!visited[v] && adjMatrix[u][v] != Integer.MAX_VALUE && distances[u] != Integer.MAX_VALUE &&
+                        distances[u] + adjMatrix[u][v] < distances[v]) {
+                    distances[v] = distances[u] + adjMatrix[u][v];
+                }
+            }
+        }
+
+        printSolution(distances, startVertex);
+    }
+
+    private int getMinimumDistanceVertex(boolean[] visited, int[] distances) {
+        int minDistance = Integer.MAX_VALUE;
+        int minIndex = -1;
+
+        for (int v = 0; v < vertices; v++) {
+            if (!visited[v] && distances[v] < minDistance) {
+                minDistance = distances[v];
+                minIndex = v;
+            }
+        }
+
+        return minIndex;
+    }
+
+    private void printSolution(int[] distances, int startVertex) {
+        System.out.println("Shortest distances from location " + startVertex + ":");
+        for (int i = 0; i < distances.length; i++) {
+            if (distances[i] == Integer.MAX_VALUE) {
+                System.out.println("To location " + i + " - Distance: INF");
+            } else {
+                System.out.println("To location " + i + " - Distance: " + distances[i]);
+            }
+        }
+    }
+}
+
+public class CourierServiceApp {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        CourierService service = null;
+        int choice;
+
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Create City Map");
+            System.out.println("2. Add Road");
+            System.out.println("3. Find Shortest Path (Dijkstra)");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter number of locations: ");
+                    int locations = scanner.nextInt();
+                    service = new CourierService(locations);
+
+                    System.out.println("City map created with " + locations + " locations.");
+                    break;
+
+                case 2:
+                    if (service == null) {
+                        System.out.println("City map not created yet.");
+                        break;
+                    }
+                    System.out.print("Enter source location, destination location, and distance: ");
+                    int source = scanner.nextInt();
+                    int destination = scanner.nextInt();
+                    int distance = scanner.nextInt();
+                    service.addRoad(source, destination, distance);
+                    System.out.println("Road added.");
+                    break;
+
+                case 3:
+                    if (service == null) {
+                        System.out.println("City map not created yet.");
+                        break;
+                    }
+                    System.out.print("Enter starting location: ");
+                    int startLocation = scanner.nextInt();
+                    service.dijkstra(startLocation);
+                    break;
+
+                case 4:
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
+
+   9.
+
+package Assignment9;
+
+import java.util.PriorityQueue;
+import java.util.Scanner;
+
+public class MarksHeap {
+    private PriorityQueue<Integer> minHeap;
+    private PriorityQueue<Integer> maxHeap;
+
+    public MarksHeap() {
+        minHeap = new PriorityQueue<>();
+        maxHeap = new PriorityQueue<>((a, b) -> b - a);
+    }
+
+    public void addMarks(int marks) {
+        minHeap.add(marks);
+        maxHeap.add(marks);
+    }
+
+    public int getMaxMarks() {
+        return maxHeap.peek();
+    }
+
+    public int getMinMarks() {
+        return minHeap.peek();
+    }
+
+    public static void main(String[] args) {
+        MarksHeap marksHeap = new MarksHeap();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the number of students: ");
+        int n = scanner.nextInt();
+
+        System.out.println("Enter the marks of " + n + " students:");
+        for (int i = 0; i < n; i++) {
+            int marks = scanner.nextInt();
+            marksHeap.addMarks(marks);
+        }
+
+        System.out.println("Maximum marks obtained: " + marksHeap.getMaxMarks());
+        System.out.println("Minimum marks obtained: " + marksHeap.getMinMarks());
+    }
+}
+
+
+
