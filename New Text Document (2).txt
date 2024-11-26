@@ -793,12 +793,14 @@ public class TransportationNetwork {
 
   7.
 
+package Assignment6;
+
 import java.util.*;
 
 class Edge implements Comparable<Edge> {
     int source, destination, weight;
 
-    public Edge(int source, int destination, int weight) {
+    Edge(int source, int destination, int weight) {
         this.source = source;
         this.destination = destination;
         this.weight = weight;
@@ -806,107 +808,119 @@ class Edge implements Comparable<Edge> {
 
     @Override
     public int compareTo(Edge other) {
-        return this.weight - other.weight; // Sort by weight
+        return this.weight - other.weight;
     }
 }
 
-class DisjointSet {
-    private int[] parent, rank;
+class Graph {
+    int vertices;
+    List<Edge> edges;
 
-    public DisjointSet(int n) {
-        parent = new int[n];
-        rank = new int[n];
-        for (int i = 0; i < n; i++) {
-            parent[i] = i; // Each node is its own parent initially
-            rank[i] = 0; // Rank is 0 initially
-        }
-    }
-
-    public int find(int x) {
-        if (parent[x] != x) {
-            parent[x] = find(parent[x]); // Path compression
-        }
-        return parent[x];
-    }
-
-    public void union(int x, int y) {
-        int rootX = find(x);
-        int rootY = find(y);
-
-        if (rootX != rootY) {
-            if (rank[rootX] > rank[rootY]) {
-                parent[rootY] = rootX;
-            } else if (rank[rootX] < rank[rootY]) {
-                parent[rootX] = rootY;
-            } else {
-                parent[rootY] = rootX;
-                rank[rootX]++;
-            }
-        }
-    }
-}
-
-public class KruskalMST {
-    private List<Edge> edges; // List of edges
-    private int vertices;
-
-    public KruskalMST(int vertices) {
+    Graph(int vertices) {
         this.vertices = vertices;
         edges = new ArrayList<>();
     }
 
-    public void addEdge(int source, int destination, int weight) {
+    void addEdge(int source, int destination, int weight) {
         edges.add(new Edge(source, destination, weight));
     }
 
-    public void findMST() {
-        Collections.sort(edges); // Sort edges by weight
-        DisjointSet ds = new DisjointSet(vertices);
+    void kruskalMST() {
+        Collections.sort(edges);
+
+        int[] parent = new int[vertices];
+        for (int i = 0; i < vertices; i++) {
+            parent[i] = i;
+        }
 
         List<Edge> mst = new ArrayList<>();
         int totalCost = 0;
 
         for (Edge edge : edges) {
-            int rootSource = ds.find(edge.source);
-            int rootDestination = ds.find(edge.destination);
+            int rootSource = find(parent, edge.source);
+            int rootDestination = find(parent, edge.destination);
 
-            if (rootSource != rootDestination) { // Add edge if it does not form a cycle
+            if (rootSource != rootDestination) {
                 mst.add(edge);
                 totalCost += edge.weight;
-                ds.union(rootSource, rootDestination);
+                union(parent, rootSource, rootDestination);
             }
         }
 
-        System.out.println("Edges in the Minimum Spanning Tree:");
+        System.out.println("Minimum Spanning Tree edges:");
         for (Edge edge : mst) {
             System.out.println("City " + edge.source + " - City " + edge.destination + " : " + edge.weight);
         }
-        System.out.println("Total cost of Minimum Spanning Tree: " + totalCost);
+        System.out.println("Total cost: " + totalCost);
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-
-        System.out.print("Enter the number of cities: ");
-        int vertices = scanner.nextInt();
-
-        KruskalMST graph = new KruskalMST(vertices);
-
-        System.out.print("Enter the number of roads: ");
-        int edges = scanner.nextInt();
-
-        System.out.println("Enter the roads (source, destination, weight):");
-        for (int i = 0; i < edges; i++) {
-            int source = scanner.nextInt();
-            int destination = scanner.nextInt();
-            int weight = scanner.nextInt();
-            graph.addEdge(source, destination, weight);
+    int find(int[] parent, int vertex) {
+        if (parent[vertex] != vertex) {
+            parent[vertex] = find(parent, parent[vertex]);
         }
+        return parent[vertex];
+    }
 
-        graph.findMST();
-        scanner.close();
+    void union(int[] parent, int root1, int root2) {
+        parent[root1] = root2;
     }
 }
+
+public class TransportationNetwork {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        Graph graph = null;
+        int choice;
+
+        while (true) {
+            System.out.println("Menu:");
+            System.out.println("1. Create Graph");
+            System.out.println("2. Add Edge");
+            System.out.println("3. Calculate Minimum Spanning Tree (MST)");
+            System.out.println("4. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter number of cities: ");
+                    int cities = scanner.nextInt();
+                    graph = new Graph(cities);
+                    System.out.println("Graph created with " + cities + " cities.");
+                    break;
+
+                case 2:
+                    if (graph == null) {
+                        System.out.println("Graph not created yet.");
+                        break;
+                    }
+                    System.out.print("Enter source city, destination city, and weight: ");
+                    int source = scanner.nextInt();
+                    int destination = scanner.nextInt();
+                    int weight = scanner.nextInt();
+                    graph.addEdge(source, destination, weight);
+                    System.out.println("Edge added.");
+                    break;
+
+                case 3:
+                    if (graph == null) {
+                        System.out.println("Graph not created yet.");
+                        break;
+                    }
+                    graph.kruskalMST();
+                    break;
+
+                case 4:
+                    scanner.close();
+                    return;
+
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+
 
 
    8.
